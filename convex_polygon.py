@@ -1,4 +1,6 @@
 
+import math
+
 
 class Point:
     
@@ -61,9 +63,32 @@ class ConvexPolygon:
                 )
 
 
+    @property 
+    def perimeter(self):
+        n = len(self.vertices)
+        total = 0.0
+        for i in range(n):
+            a = self.vertices[i]
+            b = self.vertices[(i + 1) % n]  # следующая вершина, с "зацикливанием"
+            total += math.hypot(b.x - a.x, b.y - a.y)
+        return total
+    @property 
+    def area(self):
+        n = len(self.vertices)
+        total = 0.0
+        for i in range(n):
+            a = self.vertices[i]
+            b = self.vertices[(i + 1) % n]
+            total += a.x * b.y - b.x * a.y
+        return abs(total) / 2.0
+
+
 if __name__ == "__main__":
     square = ConvexPolygon([(0, 0), (4, 0), (4, 4), (0, 4)])
     print(square.vertices)
+    print(square.area)
+    print(square.perimeter)
+
 
     try:
         ConvexPolygon([(0, 0), (2, 0), (1, 1), (2, 2), (0, 2)])
