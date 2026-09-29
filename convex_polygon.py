@@ -82,12 +82,40 @@ class ConvexPolygon:
             total += a.x * b.y - b.x * a.y
         return abs(total) / 2.0
 
+    def contains_point(self, point, include_boundary=True):
+        if not isinstance(point, Point):
+            point = Point(point[0], point[1])
+
+        n = len(self.vertices)
+        sign = None
+
+        for i in range(n):
+            a = self.vertices[i]
+            b = self.vertices[(i + 1) % n]
+            cr = self._cross(a, b, point)
+
+            if abs(cr) < 1e-9:
+                if not include_boundary:
+                    return False
+                continue  
+
+            current_sign = cr > 0
+            if sign is None:
+                sign = current_sign
+            elif current_sign != sign:
+                return False 
+
+        return True
+
 
 if __name__ == "__main__":
     square = ConvexPolygon([(0, 0), (4, 0), (4, 4), (0, 4)])
     print(square.vertices)
     print(square.area)
     print(square.perimeter)
+    print("(2,2) :", square.contains_point((2, 2)))  
+    print("(5,5) :", square.contains_point((5, 5)))  
+    print("(0,0) :", square.contains_point((0, 0)))  
 
 
     try:
